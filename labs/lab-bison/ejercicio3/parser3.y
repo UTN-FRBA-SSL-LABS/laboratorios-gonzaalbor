@@ -20,14 +20,14 @@ void yyerror(const char *msg) { fprintf(stderr, "Error: %s\n", msg); }
  *   - Las que aparecen MÁS ABAJO tienen MAYOR precedencia.
  *   - %left  → asociatividad izquierda: a - b - c  se lee  (a-b)-c
  *   - %right → asociatividad derecha:  a ** b ** c se lee  a**(b**c)
- *   - UMINUS es un token ficticio para darle precedencia al menos unario.
- *     Se asigna a una regla con:  | '-' exp %prec UMINUS  { ... }
- *
- * TODO 1 — Agregar: %left '+' '-'       (menor precedencia)
- * TODO 2 — Agregar: %left '*' '/'       (mayor precedencia que + -)
- * TODO 3 — Agregar: %right POW          (mayor precedencia que * /)
- * TODO 4 — Agregar: %right UMINUS       (mayor precedencia de todas)
+ * UMINUS es un token ficticio para darle precedencia al menos unario.
+ * Se asigna a una regla con:  | '-' exp %prec UMINUS  { ... }
  */
+
+%left '+' '-'
+%left '*' '/'
+%right POW
+%right UMINUS
 
 %%
 
@@ -46,7 +46,7 @@ exp:
   | exp '*' exp           { $$ = $1 * $3; }
   | exp '/' exp           { $$ = $1 / $3; }
   | exp POW exp           { $$ = (int)pow($1, $3); }
-  | '-' exp %prec UMINUS  { $$ = 0; /* TODO 5 — Reemplazar 0 por la expresión correcta */ }
+  | '-' exp %prec UMINUS  { $$ = -$2; }
   | '(' exp ')'           { $$ = $2; }
   | NUM                   { $$ = $1; }
   ;
